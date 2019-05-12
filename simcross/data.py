@@ -22,8 +22,6 @@ def ws353(name, metric, strategy, select1="max", select2="max", fname="combined"
         res.append(SimTask(row[0], row[1], row[2], None))
     print(len(res))
     pivot=0
-    if fname == "relatedness":
-        pivot=0.7
     return SimExperiment(name, res, metric, strategy, select1, select2, pivot)
 
 def slex(name, metric, strategy, select1="max", select2="max", fname="nvars"):

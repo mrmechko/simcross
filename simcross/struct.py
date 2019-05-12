@@ -156,7 +156,7 @@ class SemNode:
         return _dcache[strategy][node.content]
 
     @staticmethod
-    def make(node):
+    def make(node, use_trips=True):
         """
         Make a node based on the input type.
         Should add parameter dictionary to pass on to children
@@ -164,7 +164,7 @@ class SemNode:
         if type(node) is TripsType:
             return TripsNode(node)
         elif type(node) is Synset:
-            return WordNetNode(node)
+            return WordNetNode(node, use_trips)
         elif type(node) is str:
             return WordNode(node)
         elif type(node) is SemNode:
@@ -301,6 +301,10 @@ class TripsNode(SemNode):
 
 
 class WordNetNode(SemNode):
+    def __init__(self, content, use_trips):
+        super(WordNetNode, self).__init__(content)
+        self.use_trips = use_trips
+
     @property
     def name(self):
         return self.content.name()
@@ -309,12 +313,14 @@ class WordNetNode(SemNode):
     def parents(self):
         # NOTE: actually this is a little bit of a problem because we're not taking
         #       WN hypernyms
-        tt = tripsont()[self._node]# + self._node.hypernyms()
+        tt = None
+        if self.use_trips:
+            tt = tripsont()[self._node]# + self._node.hypernyms()
         if not tt:
             tt = self._node.hypernyms()
         if not tt:
             return [FakeRoot()]
-        return [SemNode.make(p) for p in tt]
+        return [SemNode.make(p, self.use_trips) for p in tt]
 
     @property
     def children(self):

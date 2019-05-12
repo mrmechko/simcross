@@ -35,8 +35,8 @@ postuple=True
 
 e = ExperimentDefinition
 definitions = [
-    e("MEN-elias", "normal", "average", "max", "max", fname),
-    e("MEN-elias", "cross", "average", "max", "max", fname),
+    e("MEN-elias", "resnik_brown", "average", "max", "max", fname),
+    e("MEN-elias", "resnik_trips", "average", "max", "max", fname),
 ]
 
 for t in definitions:
@@ -50,10 +50,10 @@ fname = ["elias", "marcos"][1]
 
 
 
-e = ExperimentDefinition 
+e = ExperimentDefinition
 definitions = [
-    e("MEN-marcos", "normal", "average", "max", "max", fname),
-    e("MEN-marcos", "cross", "average", "max", "max", fname),
+    e("MEN-marcos", "resnik_brown", "average", "max", "max", fname),
+    e("MEN-marcos", "resnik_trips", "average", "max", "max", fname),
 ]
 
 for t in definitions:
@@ -71,8 +71,8 @@ definitions = []
 
 for f in fname:
     definitions += [
-        e("MENNatural-"+f, "normal", "average", "max", "max", f),
-        e("MENNatural-"+f, "cross", "average", "max", "max", f)
+        e("MENNatural-"+f, "resnik_brown", "average", "max", "max", f),
+        e("MENNatural-"+f, "resnik_trips", "average", "max", "max", f)
     ]
 
 
@@ -91,10 +91,10 @@ definitions = []
 
 for f in fname:
     definitions += [
-        e("MEN-"+f, "normal", "average", "max", "max", f),
-        e("MEN-"+f, "cross", "average", "max", "max", f),
-        e("MEN-"+f, "cross", "lookup", "max", "max", f),
-        e("MEN-"+f, "cross", "mfs", "max", "max", f)
+        e("MEN-"+f, "resnik_brown", "average", "max", "max", f),
+        e("MEN-"+f, "resnik_trips", "average", "max", "max", f),
+        e("MEN-"+f, "resnik_trips", "lookup", "max", "max", f),
+        e("MEN-"+f, "resnik_trips", "mfs", "max", "max", f)
     ]
 
 
@@ -121,10 +121,10 @@ definitions = []
 
 for f in fname:
     definitions += [
-        e("slex-"+f, "normal", "average", "max", "max", f),
-        e("slex-"+f, "cross", "average", "max", "max", f),
-        e("slex-"+f, "cross", "lookup", "max", "max", f),
-        e("slex-"+f, "cross", "mfs", "max", "max", f)
+        e("slex-"+f, "resnik_brown", "average", "max", "max", f),
+        e("slex-"+f, "resnik_trips", "average", "max", "max", f),
+#       e("slex-"+f, "resnik_trips", "lookup", "max", "max", f),
+#       e("slex-"+f, "resnik_trips", "mfs", "max", "max", f)
     ]
 
 
@@ -148,10 +148,10 @@ definitions = []
 
 for f in fname:
     definitions += [
-        e("ws353-"+f, "normal", "average", "max", "max", f),
-        e("ws353-"+f, "cross", "average", "max", "max", f),
-        e("ws353-"+f, "cross", "average", "max", "average", f),
-        e("ws353-"+f, "cross", "mfs", "max", "max", f)
+        e("ws353-"+f, "resnik_brown", "average", "max", "max", f),
+        e("ws353-"+f, "resnik_trips", "average", "max", "max", f),
+#        e("ws353-"+f, "resnik_trips", "average", "max", "average", f),
+#        e("ws353-"+f, "resnik_trips", "mfs", "max", "max", f)
     ]
 
 
@@ -173,4 +173,3 @@ d = [("ws.csv", ws_res), ("slex.csv", slex_res), ("men.csv", MEN_res)]
 for f, y in d:
     with open(f, 'w') as fl:
         y.to_csv(fl)
-

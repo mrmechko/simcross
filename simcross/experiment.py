@@ -1,5 +1,10 @@
 import pandas as pd
 from .struct import *
+from .resnik import trips_resnik, wn_resnikq, wn_resnik2
+from nltk.corpus import wordnet_ic
+
+brown_ic = wordnet_ic.ic("ic-brown-resnik.dat")
+semcor_ic = wordnet_ic.ic("ic-semcor.dat")
 
 from collections import namedtuple
 
@@ -37,11 +42,6 @@ def hybrid_wup(s1, s2):
         return s1.content.wup_similarity(s2.content)
     return s1.wupalmer(s2)
 
-def resnik(s1, s2, ic_corpus):
-    if n_or_v(s1) and n_or_v(s2):
-        return s1.res_similarity(s2, ic_corpus)
-    return -1 #s1.wup_similarity(s2)
-
 def _list_fallback(func, fallback_func, args, both=False):
     result = func(*args)
     if not result or both:
@@ -69,8 +69,8 @@ sim_metric = {
     "cross" : lambda x, y: x.wupalmer(y, node_weights),
     "tripspath" : lambda x, y: x.path_similarity(y, weights=node_weights),
     "normal": lambda x, y: x.content.wup_similarity(y.content),
-    "resnik_brown": lambda x, y: resnik(x.content, y.content, brown_ic),
-    "resnik_semcor": lambda x, y: resnik(x.content, y.content, semcor_ic),
+    "resnik_brown": wn_resnik2,
+    "resnik_trips": trips_resnik,
     "hybrid": hybrid_wup
 }
 
