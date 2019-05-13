@@ -1,0 +1,15 @@
+,candidate,instances,metric,name,spearmanr
+0,mfs,2999,normal,slex-3000-test,0.13723388983894474
+0,mfs,2999,pathlen,slex-3000-test,0.1433155858210641
+0,mfs,2999,resnik_trips,slex-3000-test,0.14403651845081009
+0,mfs,499,resnik_trips,slex-500-dev,0.1502470599190046
+0,mfs,2999,normal_c,slex-3000-test,0.17326995831485204
+0,mfs,2999,cross,slex-3000-test,0.24175527312219114
+0,mfs,2999,tripspath,slex-3000-test,0.24237906455944208
+0,mfs,499,normal,slex-500-dev,0.2519959921511217
+0,mfs,499,pathlen,slex-500-dev,0.26275767505491443
+0,mfs,499,normal_c,slex-500-dev,0.27547694725394095
+0,mfs,2999,resnik_brown,slex-3000-test,0.28397462557396164
+0,mfs,499,cross,slex-500-dev,0.3012025650123846
+0,mfs,499,tripspath,slex-500-dev,0.30404423348403325
+0,mfs,499,resnik_brown,slex-500-dev,0.34178688282264236

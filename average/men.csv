@@ -1,0 +1,15 @@
+,candidate,instances,metric,name,spearmanr
+0,average,2000,normal,MEN-dev,0.111572405002565
+0,average,1000,normal,MEN-test,0.11292420540005646
+0,average,1000,pathlen,MEN-test,0.13277459483726284
+0,average,2000,pathlen,MEN-dev,0.1623171503466144
+0,average,1000,normal_c,MEN-test,0.2297776570898496
+0,average,1000,resnik_brown,MEN-test,0.23940318651863957
+0,average,1000,cross,MEN-test,0.2517289377471099
+0,average,1000,resnik_trips,MEN-test,0.2684585622666794
+0,average,1000,tripspath,MEN-test,0.2700853863211651
+0,average,2000,resnik_brown,MEN-dev,0.3145384229542612
+0,average,2000,resnik_trips,MEN-dev,0.31902869493314673
+0,average,2000,tripspath,MEN-dev,0.32709901123928503
+0,average,2000,normal_c,MEN-dev,0.32977009466877144
+0,average,2000,cross,MEN-dev,0.3320652452888112

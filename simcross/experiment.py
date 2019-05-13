@@ -1,6 +1,6 @@
 import pandas as pd
-from .struct import *
-from .resnik import trips_resnik, wn_resnikq, wn_resnik2
+from .structs import *
+from .resnik import trips_resnik, wn_trips_resnik, wn_resnik2
 from nltk.corpus import wordnet_ic
 
 brown_ic = wordnet_ic.ic("ic-brown-resnik.dat")
@@ -28,6 +28,11 @@ def n_or_v2(synset):
 def n_or_v(synset):
     return synset.pos() in [wn.NOUN]
 
+def can_wup(sn1, sn2, f):
+    if n_or_v2(sn1.content) and sn1.content.pos() == sn2.content.pos():
+        return f(sn1, sn2)
+    return -1
+
 def get_pos_men(x):
     x = x.lower()
     if x in "nv":
@@ -48,6 +53,12 @@ def _list_fallback(func, fallback_func, args, both=False):
         result += fallback_func(*args)
     return result
 
+def wn_pl(x, y):
+    res = x.content.path_similarity(y.content)
+    if res or res == 0:
+        return res
+    return float("-inf")
+
 sim_strategy = {
     "mfs": lambda x, p: [SemNode.make(pops(wn.synsets(x, p)))],
     "average": lambda x, p: [SemNode.make(s) for s in wn.synsets(x, p)],
@@ -67,10 +78,12 @@ sim_strategy = {
 
 sim_metric = {
     "cross" : lambda x, y: x.wupalmer(y, node_weights),
+    "normal_c" : lambda x, y: x.wupalmer(y, node_weights, use_trips=False),
     "tripspath" : lambda x, y: x.path_similarity(y, weights=node_weights),
-    "normal": lambda x, y: x.content.wup_similarity(y.content),
-    "resnik_brown": wn_resnik2,
-    "resnik_trips": trips_resnik,
+    "pathlen" : wn_pl,
+    "normal": lambda x, y: can_wup(x, y, lambda a, b: a.content.wup_similarity(b.content, simulate_root=True)),
+    "resnik_brown":  lambda x, y: can_wup(x, y, wn_resnik2),
+    "resnik_trips": wn_trips_resnik,
     "hybrid": hybrid_wup
 }
 

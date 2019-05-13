@@ -7,7 +7,7 @@ import math
 from scipy.stats import spearmanr, pearsonr
 
 from .experiment import *
-from .struct import *
+from .structs import *
 
 ExperimentDefinition = namedtuple("Experiment", ["name", "metric", "strategy", "select1", "select2", "fname"])
 
@@ -19,8 +19,7 @@ def ws353(name, metric, strategy, select1="max", select2="max", fname="combined"
     wordsim = pd.read_csv("wordsim353/{}.tab".format(fname), sep="\t")
     res = []
     for i, row in wordsim.iterrows():
-        res.append(SimTask(row[0], row[1], row[2], None))
-    print(len(res))
+        res.append(SimTask(row[0], row[1], row[2], "n"))
     pivot=0
     return SimExperiment(name, res, metric, strategy, select1, select2, pivot)
 
@@ -30,7 +29,16 @@ def slex(name, metric, strategy, select1="max", select2="max", fname="nvars"):
     for i, row in wordsim.iterrows():
         if row[2].lower() in fname:
             res.append(SimTask(row[0], row[1], row[3], row[2].lower()))
-    print(len(res))
+    pivot=0
+    if fname == "relatedness":
+        pivot=0
+    return SimExperiment(name, res, metric, strategy, select1, select2, pivot)
+
+def sverb(name, metric, strategy, select1="max", select2="max", fname="500-dev"):
+    wordsim = pd.read_csv("SimLex-3500/SimVerb-{}.txt".format(fname), sep="\t")
+    res = []
+    for i, row in wordsim.iterrows():
+        res.append(SimTask(row[0], row[1], row[3], row[2].lower()))
     pivot=0
     if fname == "relatedness":
         pivot=0
@@ -43,7 +51,6 @@ def MEN(name, metric, strategy, select1="max", select2="max", fname="dev"):
         w1, w2, score = row[0].split("-")[0], row[1].split("-")[0], row[2],
         pos1, pos2 = get_pos_men(row[0][-1]), get_pos_men(row[1][-1])
         res.append(SimTask(w1, w2, score, (pos1, pos2)))
-    print(len(res))
     pivot=0
     return SimExperiment(name, res, metric, strategy, select1, select2, pivot)
 
@@ -53,7 +60,6 @@ def MENNatural(name, metric, strategy, select1="max", select2="max", fname="dev"
     for i, row in wordsim.iterrows():
         w1, w2, score = row[0], row[1], row[2],
         res.append(SimTask(w1, w2, score, None))
-    print(len(res))
     pivot=0
     return SimExperiment(name, res, metric, strategy, select1, select2, pivot)
 
@@ -63,7 +69,6 @@ def MENIndiv(name, metric, strategy, select1="max", select2="max", fname="elias"
     for i, row in wordsim.iterrows():
         w1, w2, score = row[0], row[1], row[2],
         res.append(SimTask(w1, w2, score, None))
-    print(len(res))
     pivot=0
     if fname == "relatedness":
         pivot=0
@@ -79,24 +84,25 @@ def run_experiment(exp, postuple=False):
                 metric=exp.metric,
                 strategy=exp.strategy,
                 select1=exp.select1, select2=exp.select2,
-                cheats=d.gold
+                cheats=-1
                )) * 1/(1 - exp.pivot)
         g = d.gold
         if r >= 0:
             results.append((r,g))
     x = [r for r, g in results]
     y = [g for r, g in results]
+    print(exp.name, len(x), len(y), len(exp.data))
     return SimTaskResults(exp, x, spearmanr(x, y), None)#pearsonr(x, y))
 
 def experiment_string(exp, pandas=True, dataframe=None):
-    columns = "name metric candidate choice1 choice2 instances spearmanr conf_low conf_high".split()
+    columns = "name metric candidate instances spearmanr".split()
     if dataframe is None:
         dataframe = pd.DataFrame(columns=columns)
     e = exp.experiment
     if pandas:
         clow, chigh = confidence(exp.spearman.correlation, len(exp.instances))
-        values = [e.name, e.metric, e.strategy, e.select1, e.select2, len(exp.instances),
-        exp.spearman.correlation, clow, chigh] #exp.spearman.pvalue,
+        values = [e.name, e.metric, e.strategy, len(exp.instances),
+        abs(exp.spearman.correlation)]#, clow, chigh] #exp.spearman.pvalue,
         #exp.pearson[0], exp.pearson[1]]
         res = pd.DataFrame({v: [r] for r, v in zip(values, columns)})
         return dataframe.append(res)

@@ -6,17 +6,24 @@ from nltk.probability import ConditionalFreqDist
 from nltk.corpus import wordnet as wn
 from nltk.corpus import brown
 from nltk.corpus import wordnet_ic
-from .struct import SemNode, WordNetNode
+from .structs import SemNode, WordNetNode
 from collections import Counter, defaultdict
 
-brown_ic = wordnet_ic.ic("ic-brown-resnik.dat")
+brown_ic = wordnet_ic.ic("ic-semcorraw-resnik-add1.dat")
 ont = load()
 
 posmap = defaultdict(lambda: "X")
 posmap["NOUN"] = "n"
 posmap["VERB"] = "v"
-posmap["ADJ"] = "a"
-posmap["ADV"] = "rs"
+posmap["ADJ"] = "ars"
+posmap["ADV"] = "ars"
+
+def q(w, p):
+    if not w.startswith("q::"):
+        w = "q::"+w
+    if posmap[p.upper()] != "X":
+        p = posmap[p.upper()]
+    return (w, p)
 
 def node_getter(word, pos):
     return []
@@ -28,15 +35,15 @@ def trips_only(word, pos):
     return [SemNode.make(n) for n in ont.get_word(word, pos)]
 
 def wn_trips(word, pos):
-    r = ont["q::"+word, pos]
+    r = ont[q(word, pos)]
     return [SemNode.make(n) for n in set(r["lex"] + r["wn"])]
 
 def make_CPD(get_nodes):
-    cpd = ConditionalFreqDist([(posmap[pos], w) for w, pos in brown.tagged_words(tagset="universal")])
+    cpd = ConditionalFreqDist([(q(w, p)[1], w) for w, p in brown.tagged_words(tagset="universal")])
 
     ctr = defaultdict(Counter)
 
-    for pos in ["n", "v", "a", "rs"]:
+    for pos in ["n", "v", "ars"]:
         total = cpd[pos].N()
         ctr_ = ctr[pos]
         for w, c in cpd[pos].items():
@@ -52,12 +59,15 @@ def make_CPD(get_nodes):
                     ctr_[r] += c
                     s.extend(r.parents)
         for w in cpd[pos]:
-            cpd[pos][w] = math.log(cpd[pos][w]) - math.log(total)
+           cpd[pos][w] = math.log(cpd[pos][w]) - math.log(total)
     final_ctr = Counter()
-    for pos in ["n", "v", "a", "rs"]:
-        for s,v in ctr[pos].items(): 
+    for pos in ["n", "v", "ars"]:
+        for s,v in ctr[pos].items():
             if v != 0:
-                final_ctr[s] = v
+                if final_ctr[s] == 0:
+                    final_ctr[s] = v
+                else:
+                    final_ctr[s] += max([v, final_ctr[s]])
     return final_ctr
 
 import math
@@ -96,9 +106,6 @@ wn_only_cpd = make_CPD(wordnet_node)
 trips_only_cpd = make_CPD(trips_only)
 wn_trips_only_cpd = make_CPD(wn_trips)
 
-def q(w, p):
-    return ("q::"+w, p)
-
 def check(q1, q2):
     print(q1, q2)
 
@@ -114,6 +121,10 @@ def check(q1, q2):
 # check(q("cake", "n"), q("bread", "n"))
 
 def wn_resnik2(x, y):
+    if x.content.pos() in [wn.NOUN, wn.VERB] and y.content.pos() in [wn.NOUN, wn.VERB]:
+        return x.content.res_similarity(y.content, brown_ic)
+    else:
+        return -1
     if type(x) is not WordNetNode or type(y) is not WordNetNode:
         print("sup")
         return -1
@@ -123,3 +134,4 @@ def wn_resnik2(x, y):
     return resnik(wn_only_cpd, x, y)
 
 trips_resnik = lambda x, y: resnik(trips_only_cpd, x, y)
+wn_trips_resnik = lambda x, y: resnik(wn_trips_only_cpd, x, y)

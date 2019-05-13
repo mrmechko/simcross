@@ -1,0 +1,8 @@
+,candidate,instances,metric,name,spearmanr
+0,average,353,resnik_trips,ws353-combined,0.22502142536354955
+0,average,353,cross,ws353-combined,0.2783153325989949
+0,average,353,tripspath,ws353-combined,0.2938226088138048
+0,average,353,pathlen,ws353-combined,0.3179282104312444
+0,average,353,normal_c,ws353-combined,0.3400732688711192
+0,average,353,resnik_brown,ws353-combined,0.34417166140177524
+0,average,353,normal,ws353-combined,0.35671624730053025
