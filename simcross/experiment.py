@@ -1,10 +1,7 @@
 import pandas as pd
 from .structs import *
-from .resnik import trips_resnik, wn_trips_resnik, wn_resnik2
+#from .resnik import trips_resnik, wn_trips_resnik, wn_resnik2
 from nltk.corpus import wordnet_ic
-
-brown_ic = wordnet_ic.ic("ic-brown-resnik.dat")
-semcor_ic = wordnet_ic.ic("ic-semcor.dat")
 
 from collections import namedtuple
 
@@ -82,8 +79,8 @@ sim_metric = {
     "tripspath" : lambda x, y: x.path_similarity(y, weights=node_weights),
     "pathlen" : wn_pl,
     "normal": lambda x, y: can_wup(x, y, lambda a, b: a.content.wup_similarity(b.content, simulate_root=True)),
-    "resnik_brown":  lambda x, y: can_wup(x, y, wn_resnik2),
-    "resnik_trips": wn_trips_resnik,
+    #"resnik_brown":  lambda x, y: can_wup(x, y, wn_resnik2),
+    #"resnik_trips": wn_trips_resnik,
     "hybrid": hybrid_wup
 }
 

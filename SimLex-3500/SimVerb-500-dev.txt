@@ -1,4 +1,5 @@
 hurt	offend	V	6.81	SYNONYMS
+hurt	offend	V	6.81	SYNONYMS
 clarify	worry	V	0.33	NONE
 fasten	attach	V	8.47	HYPER/HYPONYMS
 meet	introduce	V	2.82	NONE

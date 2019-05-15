@@ -102,36 +102,36 @@ def wn_resnikq(q1, q2):
         return 0
 
 
-wn_only_cpd = make_CPD(wordnet_node)
-trips_only_cpd = make_CPD(trips_only)
-wn_trips_only_cpd = make_CPD(wn_trips)
-
-def check(q1, q2):
-    print(q1, q2)
-
-    print("resnik:", wn_resnik(q1, q2))
-    print("wn_only:", resnik_w(wn_only_cpd, q1, q2))
-    print("trips_only:", resnik_w(trips_only_cpd, q1, q2))
-    print("wn_trips_only:", resnik_w(wn_trips_only_cpd, q1, q2))
-
-# check(q("cat", "n"), q("fish", "n"))
-# check(q("dog", "n"), q("fish", "n"))
-# check(q("bread", "n"), q("fish", "n"))
-# check(q("bread", "n"), q("dog", "n"))
-# check(q("cake", "n"), q("bread", "n"))
-
-def wn_resnik2(x, y):
-    if x.content.pos() in [wn.NOUN, wn.VERB] and y.content.pos() in [wn.NOUN, wn.VERB]:
-        return x.content.res_similarity(y.content, brown_ic)
-    else:
-        return -1
-    if type(x) is not WordNetNode or type(y) is not WordNetNode:
-        print("sup")
-        return -1
-    x.use_trips = False
-    y.use_trips = False
-    #print(type(wn_only_cpd))
-    return resnik(wn_only_cpd, x, y)
-
-trips_resnik = lambda x, y: resnik(trips_only_cpd, x, y)
-wn_trips_resnik = lambda x, y: resnik(wn_trips_only_cpd, x, y)
+# wn_only_cpd = make_CPD(wordnet_node)
+# trips_only_cpd = make_CPD(trips_only)
+# wn_trips_only_cpd = make_CPD(wn_trips)
+#
+# def check(q1, q2):
+#     print(q1, q2)
+#
+#     print("resnik:", wn_resnik(q1, q2))
+#     print("wn_only:", resnik_w(wn_only_cpd, q1, q2))
+#     print("trips_only:", resnik_w(trips_only_cpd, q1, q2))
+#     print("wn_trips_only:", resnik_w(wn_trips_only_cpd, q1, q2))
+#
+# # check(q("cat", "n"), q("fish", "n"))
+# # check(q("dog", "n"), q("fish", "n"))
+# # check(q("bread", "n"), q("fish", "n"))
+# # check(q("bread", "n"), q("dog", "n"))
+# # check(q("cake", "n"), q("bread", "n"))
+#
+# def wn_resnik2(x, y):
+#     if x.content.pos() in [wn.NOUN, wn.VERB] and y.content.pos() in [wn.NOUN, wn.VERB]:
+#         return x.content.res_similarity(y.content, brown_ic)
+#     else:
+#         return -1
+#     if type(x) is not WordNetNode or type(y) is not WordNetNode:
+#         print("sup")
+#         return -1
+#     x.use_trips = False
+#     y.use_trips = False
+#     #print(type(wn_only_cpd))
+#     return resnik(wn_only_cpd, x, y)
+#
+# trips_resnik = lambda x, y: resnik(trips_only_cpd, x, y)
+# wn_trips_resnik = lambda x, y: resnik(wn_trips_only_cpd, x, y)

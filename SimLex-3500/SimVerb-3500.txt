@@ -1,3 +1,4 @@
+w1  w2  pos score wn
 take	remove	V	6.81	SYNONYMS
 walk	trail	V	4.81	COHYPONYMS
 feed	starve	V	1.49	ANTONYMS

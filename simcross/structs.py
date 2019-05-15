@@ -15,7 +15,7 @@ Default node weights, can be overrided for variations
 """
 _node_weights = defaultdict(lambda: 1)
 
-_node_weights["fakeroot"] = 0
+_node_weights["fakeroot"] = 1
 
 _dcache = {}
 
@@ -137,7 +137,6 @@ class SemNode:
         Get the total depth of a path, defined as a list of nodes.
         Does not check validity of path
         """
-
         return sum([p.weight(weights=weights) for p in path])
 
     @staticmethod
@@ -147,7 +146,7 @@ class SemNode:
         Default is minimum depth from any root.
         """
         if strategy in _dcache:
-            if node.content in _dcache:
+            if node.content in _dcache[strategy]:
                 return _dcache[strategy][node.content]
         else:
             _dcache[strategy] = {}
@@ -162,7 +161,6 @@ class SemNode:
         Should add parameter dictionary to pass on to children
         """
         if type(node) is TripsType:
-            print(node)
             return TripsNode(node)
         elif type(node) is Synset:
             return WordNetNode(node, use_trips)
@@ -225,7 +223,8 @@ class SemNode:
         lcs_depth = ListStrategy[lcs_strategy]([SemNode.depth(d, weights, depth_strategy) for d in self.lcs_set(other)])
         sd = SemNode.depth(self, weights, depth_strategy)
         od = SemNode.depth(other, weights, depth_strategy)
-        return 1/(1+(sd + od) - 2 * lcs_depth)
+        #print(self, other, sd, od, lcs_depth)
+        return 1/(max(1, 1+(sd + od) - 2 * lcs_depth))
 
 
 # In[3]:
@@ -333,7 +332,7 @@ class WordNetNode(SemNode):
 
     @property
     def children(self):
-        return [SemNode.make(c) for c in self._node.hyponyms()]
+        return [SemNode.make(c, self.use_trips) for c in self._node.hyponyms()]
 
     @property
     def resource(self):

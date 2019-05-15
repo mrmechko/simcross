@@ -14,13 +14,13 @@ def get_t_defs(name, f):
     name = name+f
     candidates = "average"
     return [
+        e(name, "cross", candidates, "max", "max", f),
         #e(name, "resnik_brown", candidates, "max", "max", f),
-        e(name, "normal_c", candidates, "max", "max", f),
-        #e(name, "normal", candidates, "max", "max", f),
+        #e(name, "normal_c", candidates, "max", "max", f),
+        e(name, "normal", candidates, "max", "max", f),
         #e(name, "resnik_trips", candidates, "max", "max", f),
-        #e(name, "cross", candidates, "max", "max", f),
-        #e(name, "pathlen", candidates, "max", "max", f),
-        #e(name, "tripspath", candidates, "max", "max", f),
+        e(name, "pathlen", candidates, "max", "max", f),
+        e(name, "tripspath", candidates, "max", "max", f),
     ]
 # In[5]:
 
@@ -35,9 +35,8 @@ node_weights["word"] = 1
 
 postuple=True
 
-def run_MEN():
+def run_MEN(df=None):
     print("running MEN")
-    df = None
     test = MEN
     fname = ["dev", "test"]
 
@@ -48,19 +47,19 @@ def run_MEN():
         definitions += get_t_defs("MEN-", f)
 
     for t in definitions:
-        df = experiment_string(run_experiment(run_dataset(t, test), postuple=postuple), dataframe=df)
+        df = experiment_string(run_experiment(run_dataset(t, test), postuple=False), dataframe=df)
 
     with open("MEN.csv", 'w') as fl:
         df.sort_values(by="spearmanr").to_csv(fl)
+    return df
 
 
 # In[ ]:
 
-def run_slex():
+def run_slex(df=None):
     print("running slex")
-    df = None
     test = slex
-    fname = ["n", "v", "vars", "nvars"]
+    fname = ["nvars"] #, "vars", "nvars"]
     postuple=False
     e = ExperimentDefinition
     definitions = []
@@ -69,16 +68,16 @@ def run_slex():
         definitions += get_t_defs("slex-", f)
 
     for t in definitions:
-        df = experiment_string(run_experiment(run_dataset(t, test), postuple=postuple), dataframe=df)
+        df = experiment_string(run_experiment_to_store(run_dataset(t, test), postuple=postuple), dataframe=df)
 
     with open("slex.csv", 'w') as fl:
         df.sort_values(by="spearmanr").to_csv(fl)
+    return df
 
-def run_verb():
+def run_verb(df=None):
     print("running sverb")
-    df = None
     test = sverb
-    fname = ["500-dev", "3000-test"]
+    fname = ["3000-test"]
     postuple=False
     e = ExperimentDefinition
     definitions = []
@@ -91,13 +90,13 @@ def run_verb():
 
     with open("sverb.csv", 'w') as fl:
         df.sort_values(by="spearmanr").to_csv(fl)
+    return df
 
 # In[ ]:
 
 
-def run_ws():
+def run_ws(df=None):
     print("running wordsim")
-    df = None
     test = ws353
     fname = ["combined"]
     postuple=False
@@ -112,9 +111,33 @@ def run_ws():
 
     with open("ws.csv", 'w') as fl:
         df.sort_values(by=["name", "spearmanr"]).to_csv(fl)
+    return df
+
+def run_smalls(df=None):
+    print("running smalls")
+    test = smalls
+    fname = ["MC", "RG"]
+    postuple=False
+
+    definitions = []
+
+    for f in fname:
+        definitions += get_t_defs("", f)
+
+    for t in definitions:
+        df = experiment_string(run_experiment(run_dataset(t, test), postuple=postuple), dataframe=df)
+
+    with open("smalls.csv", 'w') as fl:
+        df.sort_values(by=["name", "spearmanr"]).to_csv(fl)
+    return df
 
 
-#run_verb()
-run_ws()
-#run_slex()
-#run_MEN()
+#df = run_verb()
+#df = run_ws(df)
+df = run_slex(df)
+#df = run_MEN(df)
+#df = run_smalls(df)
+
+
+with open("all.csv", 'w') as fl:
+    df.sort_values(by=["name", "spearmanr"]).to_csv(fl)

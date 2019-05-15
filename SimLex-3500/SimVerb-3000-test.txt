@@ -1,4 +1,5 @@
 walk	trail	V	4.81	COHYPONYMS
+walk	trail	V	4.81	COHYPONYMS
 feed	starve	V	1.49	ANTONYMS
 shine	polish	V	7.80	SYNONYMS
 calculate	add	V	5.98	HYPER/HYPONYMS

@@ -1,0 +1,5 @@
+,candidate,instances,metric,name,spearmanr
+0,average,1000,normal,slex-nvars,0.38946631753071576
+0,average,1000,pathlen,slex-nvars,0.40004382636677616
+0,average,1000,tripspath,slex-nvars,0.42123699543922216
+0,average,1000,cross,slex-nvars,0.465979237585917

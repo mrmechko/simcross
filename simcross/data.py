@@ -23,6 +23,14 @@ def ws353(name, metric, strategy, select1="max", select2="max", fname="combined"
     pivot=0
     return SimExperiment(name, res, metric, strategy, select1, select2, pivot)
 
+def smalls(name, metric, strategy, select1="max", select2="max", fname="MC"):
+    wordsim = pd.read_csv("{}.txt".format(fname), sep="\t")
+    res = []
+    for i, row in wordsim.iterrows():
+        res.append(SimTask(row[0], row[1], row[2], "n"))
+    pivot=0
+    return SimExperiment(name, res, metric, strategy, select1, select2, pivot)
+
 def slex(name, metric, strategy, select1="max", select2="max", fname="nvars"):
     wordsim = pd.read_csv("SimLex-999/SimLex-999.txt".format(fname), sep="\t")
     res = []
@@ -50,7 +58,8 @@ def MEN(name, metric, strategy, select1="max", select2="max", fname="dev"):
     for i, row in wordsim.iterrows():
         w1, w2, score = row[0].split("-")[0], row[1].split("-")[0], row[2],
         pos1, pos2 = get_pos_men(row[0][-1]), get_pos_men(row[1][-1])
-        res.append(SimTask(w1, w2, score, (pos1, pos2)))
+        if pos1 != pos2:
+            res.append(SimTask(w1, w2, score, (pos1, pos2)))
     pivot=0
     return SimExperiment(name, res, metric, strategy, select1, select2, pivot)
 
@@ -88,13 +97,38 @@ def run_experiment(exp, postuple=False):
                )) * 1/(1 - exp.pivot)
         g = d.gold
         if r >= 0:
-            results.append((r,g))
-    x = [r for r, g in results]
-    y = [g for r, g in results]
+            results.append((r,g, d))
+    x = [r for r, g, d in results]
+    y = [g for r, g, d in results]
     print(exp.name, len(x), len(y), len(exp.data))
     return SimTaskResults(exp, x, spearmanr(x, y), None)#pearsonr(x, y))
 
+def run_experiment_to_store(exp, postuple=False):
+    results = [('metric', 'judgement', 'word1', 'word2', 'pos')]
+    st = similarity_test
+    if postuple:
+        st = similarity_test2
+    for d in exp.data:
+        r = abs(exp.pivot - st(d.word1, d.word2, pos=d.pos,
+                metric=exp.metric,
+                strategy=exp.strategy,
+                select1=exp.select1, select2=exp.select2,
+                cheats=-1
+               )) * 1/(1 - exp.pivot)
+        g = d.gold
+        if r >= 0:
+            results.append([r,g,d.word1,d.word2,d.pos])
+    with open("run-{}-{}.csv".format(exp.name, exp.metric), 'w') as out:
+        for x in results:
+            out.write("{},{},{},{},{}\n".format(x[0], x[1], x[2], x[3], x[4]))
+    x = [r for r, g, d, a,b in results]
+    y = [g for r, g, d, a,b in results]
+    print(exp.name, len(x), len(y), len(exp.data))
+    return SimTaskResults(exp, x, spearmanr(x, y), None)#pearsonr(x, y))
+
+
 def experiment_string(exp, pandas=True, dataframe=None):
+    print("done")
     columns = "name metric candidate instances spearmanr".split()
     if dataframe is None:
         dataframe = pd.DataFrame(columns=columns)
